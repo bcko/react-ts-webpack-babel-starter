@@ -1,9 +1,23 @@
 import path from "path";
 import webpack from "webpack";
-import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 
 const config: webpack.Configuration = {
     entry: "./src/index.tsx",
+    resolve: {
+        extensions: [".tsx", ".ts", ".js", "jsx"],
+    },
+    output: {
+        filename: '[name].[contenthash].js',
+        path: path.resolve(__dirname, 'build'),
+    },
+    optimization: {
+        splitChunks: {
+            chunks: 'all'
+        },
+        runtimeChunk: 'single'
+    },
     module: {
         rules: [
             {
@@ -20,23 +34,35 @@ const config: webpack.Configuration = {
                     },
                 },
             },
+            {
+                test: /\.css$/i,
+                use: ['style-loader', 'css-loader'],
+            },
+            {
+                test: /\.(png|svg|jpg|jpeg|gif)$/i,
+                type: 'asset/resource',
+            },
+            {
+                test: /\.(woff|woff2|eot|ttf|otf)$/i,
+                type: 'asset/resource',
+            },
+            {
+                test: /\.(csv|tsv)$/i,
+                use: ['csv-loader'],
+            },
+            {
+                test: /\.xml$/i,
+                use: ['xml-loader'],
+            },
+
         ],
     },
     plugins: [
-        new ForkTsCheckerWebpackPlugin({
-            async: false,
-            eslint: {
-                files: "./src/**/*",
-            },
+        new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
+        new HtmlWebpackPlugin({
+            template: 'public/index.html'
         }),
     ],
-    resolve: {
-        extensions: [".tsx", ".ts", ".js", "jsx"],
-    },
-    output: {
-        path: path.resolve(__dirname, "build"),
-        filename: "bundle.js",
-    },
     devServer: {
         contentBase: path.join(__dirname, "build"),
         compress: true,
