@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import * as React from "react";
 import styled from 'styled-components'
 
@@ -12,8 +13,11 @@ const Title = styled.h1`
   color: palevioletred;
 `;
 
-export const Hello = (props: HelloProps) => (
-  <Title>
-    Hello from {props.compiler} and {props.framework}!
-  </Title>
-);
+export default function Hello(props: HelloProps) {
+  return (
+    <Title>
+      Hello from {props.compiler} and {props.framework}!
+    </Title>
+
+  )
+}
